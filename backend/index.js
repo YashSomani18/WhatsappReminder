@@ -2,15 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const moment = require("moment-timezone"); // Import moment-timezone
 
 // App config
 const app = express();
-app.use(cors({ origin: "https://whatsappreminder.netlify.app" }));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // DB config
-
 const username = process.env.MONGODB_USERNAME;
 const password = process.env.MONGODB_PASSWORD;
 const connectionUri = `mongodb+srv://${username}:${password}@reminderwp.r1c8vd6.mongodb.net/?retryWrites=true&w=majority`;
@@ -19,7 +19,7 @@ mongoose
   .connect(connectionUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 30000,
+    serverSelectionTimeoutMS: 300000,
   })
   .then(() => {
     console.log("Connected to MongoDB");
@@ -36,7 +36,7 @@ mongoose
 const reminderSchema = new mongoose.Schema({
   phoneNumber: String,
   reminderMsg: String,
-  remindAt: String,
+  remindAt: Date,
   isReminded: Boolean,
 });
 const Reminder = mongoose.model("Reminder", reminderSchema);
@@ -71,7 +71,7 @@ setInterval(async () => {
   try {
     const reminderList = await Reminder.find({
       isReminded: false,
-      remindAt: { $lt: now },
+      remindAt: { $lte: now },
     });
     for (const reminder of reminderList) {
       await Reminder.findByIdAndUpdate(reminder._id, { isReminded: true });
@@ -100,7 +100,7 @@ app.post("/addReminder", async (req, res) => {
     const reminder = new Reminder({
       phoneNumber,
       reminderMsg,
-      remindAt,
+      remindAt: moment.tz(remindAt, "Asia/Kolkata").toDate(), // Convert remindAt to Date object using moment.js with timezone
       isReminded: false,
     });
 

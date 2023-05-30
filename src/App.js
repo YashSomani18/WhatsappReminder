@@ -4,6 +4,10 @@ import "./App.css";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 const phoneNumberRegex = /^\d{10}$/;
+const isLocal = process.env.NODE_ENV === "development";
+const baseURL = isLocal
+  ? "http://localhost:9000"
+  : "https://whatsappreminderbackend.onrender.com";
 
 function App() {
   const [reminderMsg, setReminderMsg] = useState("");
@@ -25,7 +29,7 @@ function App() {
     }
     const remindAt = new Date(`${date} ${time}`);
     axios
-      .post("https://whatsappreminderbackend.onrender.com/addReminder", {
+      .post(`${baseURL}/addReminder`, {
         phoneNumber,
         reminderMsg,
         remindAt,
@@ -39,9 +43,8 @@ function App() {
 
   const deleteReminder = (id) => {
     axios
-    .post("https://whatsappreminderbackend.onrender.com/deleteReminder", { id })
-    .then((res) => setReminderList(res.data));
-  
+      .post(`${baseURL}/deleteReminder`, { id })
+      .then((res) => setReminderList(res.data));
   };
 
   const handleThemeChange = (newTheme) => {
@@ -83,8 +86,7 @@ function App() {
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
           />
-          {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-          
+          {error && <p style={{ color: "red" }}>{error}</p>}
           <input
             type="text"
             placeholder="Reminder notes here..."
