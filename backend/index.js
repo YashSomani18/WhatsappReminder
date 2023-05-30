@@ -20,7 +20,7 @@ mongoose
   })
   .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(9000, () => {
+    app.listen(process.env.PORT || 9000, () => {
       console.log("Backend working successfully");
     });
   })
@@ -37,19 +37,15 @@ const reminderSchema = new mongoose.Schema({
 });
 const Reminder = mongoose.model("reminder", reminderSchema);
 
-
 const sendReminder = (reminder) => {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
 
   const phoneNumberRegex = /^\d{10}$/;
   if (!phoneNumberRegex.test(reminder.phoneNumber)) {
-    
-    console.log(reminder.phoneNumber,reminder.phoneNumberRegex);
     console.log("Invalid phone number");
     return;
   }
-
 
   const client = require("twilio")(accountSid, authToken);
 
@@ -126,3 +122,5 @@ app.post("/deleteReminder", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+
+module.exports = app;
