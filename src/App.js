@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import { FaSun, FaMoon } from "react-icons/fa";
-const config = require("./config.js");
 
 const phoneNumberRegex = /^\d{10}$/;
 
@@ -26,7 +25,7 @@ function App() {
     }
     const remindAt = new Date(`${date} ${time}`);
     axios
-      .post(`${config.API_ENDPOINT}/addReminder`, {
+      .post("https://whatsappreminderbackend.onrender.com/addReminder", {
         phoneNumber,
         reminderMsg,
         remindAt,
@@ -40,7 +39,7 @@ function App() {
 
   const deleteReminder = (id) => {
     axios
-    .post(`${config.API_ENDPOINT}/deleteReminder`, { id })
+    .post("https://whatsappreminderbackend.onrender.com/deleteReminder", { id })
     .then((res) => setReminderList(res.data));
   
   };
