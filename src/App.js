@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import { FaSun, FaMoon } from "react-icons/fa";
+const config = require("./config.js");
 
 const phoneNumberRegex = /^\d{10}$/;
 
@@ -19,14 +20,13 @@ function App() {
   }, [theme]);
 
   const addReminder = () => {
-    // Check if phone number is valid before sending the request
     if (!phoneNumberRegex.test(phoneNumber)) {
       setError("Invalid Phone Number");
       return;
     }
     const remindAt = new Date(`${date} ${time}`);
     axios
-      .post("http://localhost:9000/addReminder", {
+      .post(`${config.API_ENDPOINT}/addReminder`, {
         phoneNumber,
         reminderMsg,
         remindAt,
@@ -40,8 +40,9 @@ function App() {
 
   const deleteReminder = (id) => {
     axios
-      .post("http://localhost:9000/deleteReminder", { id })
-      .then((res) => setReminderList(res.data));
+    .post(`${config.API_ENDPOINT}/deleteReminder`, { id })
+    .then((res) => setReminderList(res.data));
+  
   };
 
   const handleThemeChange = (newTheme) => {
@@ -84,7 +85,7 @@ function App() {
             onChange={handlePhoneNumberChange}
           />
           {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-          {/* Show error message if it exists */}
+          
           <input
             type="text"
             placeholder="Reminder notes here..."

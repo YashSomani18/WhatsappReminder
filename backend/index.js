@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 
 // App config
 const app = express();
+app.use(cors({ origin: "https://whatsappreminder.netlify.app" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
 // DB config
 
@@ -19,7 +19,7 @@ mongoose
   .connect(connectionUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 30000, 
+    serverSelectionTimeoutMS: 30000,
   })
   .then(() => {
     console.log("Connected to MongoDB");
