@@ -3,10 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const username = process.env.MONGODB_USERNAME;
-const password = process.env.MONGODB_PASSWORD;
-const connectionUri = `mongodb+srv://${username}:${password}@reminderwp.r1c8vd6.mongodb.net/?retryWrites=true&w=majority`;
-
 // App config
 const app = express();
 app.use(express.json());
@@ -14,16 +10,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // DB config
+
+const username = process.env.MONGODB_USERNAME;
+const password = process.env.MONGODB_PASSWORD;
+const connectionUri = `mongodb+srv://${username}:${password}@reminderwp.r1c8vd6.mongodb.net/?retryWrites=true&w=majority`;
+
 mongoose
   .connect(connectionUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 30000, // Increased timeout to 30 seconds
+    serverSelectionTimeoutMS: 30000, 
   })
   .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(process.env.PORT || 9000, () => {
-      console.log("Backend working successfully");
+    const port = process.env.PORT || 9000;
+    app.listen(port, () => {
+      console.log(`Backend listening on port ${port}`);
     });
   })
   .catch((error) => {
@@ -37,9 +39,9 @@ const reminderSchema = new mongoose.Schema({
   remindAt: String,
   isReminded: Boolean,
 });
-const Reminder = mongoose.model("reminder", reminderSchema);
+const Reminder = mongoose.model("Reminder", reminderSchema);
 
-const sendReminder = (reminder) => {
+const sendReminder = async (reminder) => {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
 
@@ -51,36 +53,33 @@ const sendReminder = (reminder) => {
 
   const client = require("twilio")(accountSid, authToken);
 
-  client.messages
-    .create({
+  try {
+    const message = await client.messages.create({
       body: reminder.reminderMsg,
       from: "whatsapp:+14155238886",
       to: `whatsapp:+91${reminder.phoneNumber}`,
-    })
-    .then((message) => console.log(message.sid))
-    .catch((err) => {
-      console.log("Error sending reminder:", err);
     });
+    console.log(message.sid);
+  } catch (error) {
+    console.log("Error sending reminder:", error);
+  }
 };
 
 // Schedule reminders check
-setInterval(() => {
+setInterval(async () => {
   const now = new Date();
-  Reminder.find({ isReminded: false, remindAt: { $lt: now } })
-    .then((reminderList) => {
-      reminderList.forEach((reminder) => {
-        Reminder.findByIdAndUpdate(reminder._id, { isReminded: true })
-          .then((remindObj) => {
-            sendReminder(reminder);
-          })
-          .catch((err) => {
-            console.log("Error updating reminder:", err);
-          });
-      });
-    })
-    .catch((err) => {
-      console.log("Error fetching reminders:", err);
+  try {
+    const reminderList = await Reminder.find({
+      isReminded: false,
+      remindAt: { $lt: now },
     });
+    for (const reminder of reminderList) {
+      await Reminder.findByIdAndUpdate(reminder._id, { isReminded: true });
+      sendReminder(reminder);
+    }
+  } catch (error) {
+    console.log("Error updating or sending reminders:", error);
+  }
 }, 1000);
 
 // API Routes
@@ -106,8 +105,8 @@ app.post("/addReminder", async (req, res) => {
     });
 
     await reminder.save();
-    const reminderList = await Reminder.find({});
-    res.send(reminderList);
+    const updatedReminderList = await Reminder.find({});
+    res.send(updatedReminderList);
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal server error");
@@ -119,8 +118,8 @@ app.post("/deleteReminder", async (req, res) => {
 
   try {
     await Reminder.deleteOne({ _id: id });
-    const reminderList = await Reminder.find({});
-    res.send(reminderList);
+    const updatedReminderList = await Reminder.find({});
+    res.send(updatedReminderList);
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal server error");
