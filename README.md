@@ -8,6 +8,7 @@ WhatsApp Reminder App is a web application that allows users to schedule reminde
 
 - Schedule reminders with a specific date and time.
 - Reminders are sent as WhatsApp messages using the Twilio API.
+- Change the Theme of your choice
 - View the list of scheduled reminders.
 - Delete reminders when they are no longer needed.
 
