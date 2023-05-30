@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+
 const username = process.env.MONGODB_USERNAME;
 const password = process.env.MONGODB_PASSWORD;
 const connectionUri = `mongodb+srv://${username}:${password}@reminderwp.r1c8vd6.mongodb.net/?retryWrites=true&w=majority`;
@@ -17,6 +18,7 @@ mongoose
   .connect(connectionUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000, // Increased timeout to 30 seconds
   })
   .then(() => {
     console.log("Connected to MongoDB");
@@ -30,7 +32,7 @@ mongoose
 
 // Schema
 const reminderSchema = new mongoose.Schema({
-  phoneNumber: String, // Added phoneNumber field
+  phoneNumber: String,
   reminderMsg: String,
   remindAt: String,
   isReminded: Boolean,
@@ -56,7 +58,9 @@ const sendReminder = (reminder) => {
       to: `whatsapp:+91${reminder.phoneNumber}`,
     })
     .then((message) => console.log(message.sid))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log("Error sending reminder:", err);
+    });
 };
 
 // Schedule reminders check
@@ -70,12 +74,12 @@ setInterval(() => {
             sendReminder(reminder);
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Error updating reminder:", err);
           });
       });
     })
     .catch((err) => {
-      console.log(err);
+      console.log("Error fetching reminders:", err);
     });
 }, 1000);
 
