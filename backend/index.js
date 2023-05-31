@@ -74,8 +74,9 @@ setInterval(async () => {
       remindAt: { $lte: now },
     });
     for (const reminder of reminderList) {
-      await Reminder.findByIdAndUpdate(reminder._id, { isReminded: true });
       sendReminder(reminder);
+      // Delete the reminder after it's sent
+      await Reminder.findByIdAndDelete(reminder._id);
     }
   } catch (error) {
     console.log("Error updating or sending reminders:", error);
