@@ -1,33 +1,33 @@
 # WhatsappReminder
 
-# WhatsApp Reminder App
+# Whatsapp Reminder App
 
-WhatsApp Reminder App is a web application that allows users to schedule reminders and receive them as WhatsApp messages. It uses the Twilio API for sending messages and MongoDB for storing reminders.
+This is a simple reminder application that allows users to add reminders with specific dates and times and sends them reminders via WhatsApp.
 
-## Features
+# Features
 
-- Schedule reminders with a specific date and time.
-- Reminders are sent as WhatsApp messages using the Twilio API.
-- Change the Theme of your choice
-- View the list of scheduled reminders.
-- Delete reminders when they are no longer needed.
+-Add reminders with phone numbers, reminder messages, and specific date and time.
+-View a list of all reminders.
+-Delete reminders from the list.
+-Toggle between dark and white themes.
+-Reminders are sent via WhatsApp using Twilio API.
+-Reminders are scheduled to be sent at the specified date and time.
 
-## Technologies Used
+# Technologies Used
 
-### Frontend
+Frontend: React.js
+Backend: Node.js with Express.js
+Database: MongoDB
+External Services: Twilio API (for sending WhatsApp messages)
+Additional Libraries: axios, moment-timezone, mongoose, cors
 
-- React.js: A JavaScript library for building user interfaces.
-- Axios: A promise-based HTTP client for making API requests.
-- react-icons: A library that provides icons for your React components.
-- CSS: Styling the user interface.
+# Getting Started
 
-### Backend
+To run the Reminder App locally, follow these steps:
 
-- Node.js: A JavaScript runtime for running JavaScript on the server.
-- Express.js: A web application framework for building APIs.
-- MongoDB: A NoSQL database for storing reminders.
-- Mongoose: An Object Data Modeling (ODM) library for MongoDB.
-- Twilio API: A cloud communications platform for sending WhatsApp messages.
+Prerequisites
+Node.js and npm (Node Package Manager) should be installed on your machine.
+MongoDB should be installed and running.
 
 ## Installation and Setup
 
@@ -74,14 +74,27 @@ WhatsApp Reminder App is a web application that allows users to schedule reminde
 
 4. Start the backend server:
 
-## Usage
+# Usage
 
-1. Open the application in your web browser.
-2. Enter the phone number, reminder message, date, and time.
-3. You can change the theme according to your need either Light or Dark.
-4. To get the reminder you first need to send "join roll-cost" to this whatsapp number "+14155238886"
-5. Click the "Add Reminder" button to schedule the reminder.
-6. The reminder will be saved in the database and sent as a WhatsApp message at the specified time.
-7. View the list of scheduled reminders on the homepage.
-8. To delete a reminder, click the "Delete" button next to the reminder.
+1. Enter a valid 10-digit phone number and reminder details in the form inputs.
+2. Select a date and time for the reminder.
+3. Click the "Add Reminder" button to add the reminder.
+4. The reminder will be displayed in the reminder list.
+5. Reminders that have passed their scheduled date and time will be sent via WhatsApp, and then they will be automatically        deleted from the list.
+6. To delete a reminder, click the "Delete" button next to the reminder in the list.
+7. Use the theme toggle buttons in the header to switch between dark and white themes.
+
+# API Endpoints
+
+- GET /getAllReminder: Get all reminders.
+- POST /addReminder: Add a new reminder.
+- POST /deleteReminder: Delete a reminder.
+
+# Notes
+
+1. The reminder scheduling functionality uses the setInterval method to periodically check for reminders that need to be sent.    In a production environment, it is recommended to use a task scheduler or a message queue system for more reliable and        scalable scheduling.
+2. The application assumes that the Twilio API credentials are valid and the phone numbers provided are registered on            WhatsApp.
+4. The application uses the moment-timezone library to handle timezone conversion when saving the reminder and displaying the    reminder time.
+5. The MongoDB connection string provided assumes a connection to MongoDB Atlas. If you are using a local MongoDB instance,   
+   please update the connection string accordingly.
 
