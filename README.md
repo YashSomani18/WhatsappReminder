@@ -3,6 +3,9 @@
 # Whatsapp Reminder App
 
 This is a simple reminder application that allows users to add reminders with specific dates and times and sends them reminders via WhatsApp.
+Note-
+To start using this service you first need to send "join roll-cost" to +14155238886
+
 
 # Features
 
