@@ -10,7 +10,7 @@ const baseURL = isLocal
   : "https://whatsappreminderbackend.onrender.com";
 
 function ReminderCard({ reminder }) {
-  console.log(reminder);
+  // console.log(reminder);
   const dispatch = useDispatch();
 
   const deleteReminder = (id) => {

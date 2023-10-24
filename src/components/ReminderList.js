@@ -5,7 +5,7 @@ import ReminderCard from "./ReminderCard"; // adjust the import path as per your
 
 function ReminderList() {
   const reminderList = useSelector((store) => store.reminder.Reminders);
-  console.log(reminderList);
+  // console.log(reminderList);
 
   return (
 <div className="flex flex-nowrap gap-4 overflow-x-auto ml-4">
